@@ -10,43 +10,56 @@ import {
 } from "firebase/firestore"
 import { db } from "../firebase"
 import { useAuth } from "../context/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 export default function ProjectList() {
   const { user } = useAuth()
   const [projects, setProjects] = useState([])
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const q = query(
-      collection(db, "projects"),
-      where("ownerUid", "==", user.uid),
-      orderBy("createdAt", "desc")
+  if (!user) return
+
+  const q = query(
+    collection(db, "projects"),
+    where("ownerUid", "==", user.uid),
+    orderBy("createdAt", "desc")
+  )
+
+  const unsub = onSnapshot(q, (snapshot) => {
+    setProjects(
+      snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
     )
+  })
 
-    const unsub = onSnapshot(q, (snap) => {
-      setProjects(
-        snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-      )
-    })
+  return () => unsub()
+}, [user])
 
-    return () => unsub()
-  }, [user.uid])
 
   const deleteProject = async (id) => {
+    if (!confirm("Segur que vols eliminar aquest projecte?")) return
     await deleteDoc(doc(db, "projects", id))
   }
 
   return (
     <ul className="space-y-2">
-      {projects.map(p => (
+      {projects.map(project => (
         <li
-          key={p.id}
-          className="flex justify-between items-center p-2 border rounded"
+          key={project.id}
+          className="p-3 border rounded flex justify-between items-center cursor-pointer hover:bg-gray-50"
+          onClick={() => navigate(`/projects/${project.id}`)}
         >
-          <span>{p.title}</span>
+          <span className="font-medium">{project.title}</span>
 
           <button
             className="btn btn-xs btn-error"
-            onClick={() => deleteProject(p.id)}
+            onClick={(e) => {
+              e.stopPropagation()
+              deleteProject(project.id)
+            }}
           >
             Eliminar
           </button>
