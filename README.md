@@ -1,16 +1,94 @@
-# React + Vite
+# Gestió de Despeses Compartides – DA02
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 Descripció
+Aplicació web desenvolupada amb React i Firebase que permet gestionar projectes de despeses compartides. Els usuaris poden crear projectes, afegir participants, registrar despeses i consultar un resum econòmic automàtic que indica quant ha de pagar o rebre cada participant.
 
-Currently, two official plugins are available:
+Aquest projecte s’ha realitzat com a pràctica de la unitat **DA02 – Desenvolupament al núvol**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🎯 Objectius del projecte
+- Implementar autenticació d’usuaris amb Firebase Auth.
+- Protegir les rutes de l’aplicació perquè només els usuaris autenticats hi puguin accedir.
+- Gestionar projectes amb participants.
+- Registrar i gestionar despeses associades a cada projecte.
+- Calcular automàticament el balanç econòmic de cada participant.
+- Aplicar regles de seguretat a Firebase Firestore.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠 Tecnologies utilitzades
+- **React + Vite**
+- **Firebase Authentication**
+- **Firebase Firestore**
+- **React Router**
+- **Tailwind CSS**
+- **DaisyUI**
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## ⚙️ Instal·lació i execució
+
+1. Clonar el repositori:
+```bash
+git clone <url-del-repositori>
+
+2. Instal·lar dependències:
+
+npm install
+
+3. Crear un fitxer .env a partir de .env.example i afegir les claus de Firebase.
+
+4. Executar el projecte:
+
+npm run dev
+
+L’aplicació estarà disponible a:
+
+http://localhost:5173
+
+Variables d’entorn
+
+El projecte utilitza variables d’entorn per a la configuració de Firebase.
+Cal crear un fitxer .env amb el format següent:
+
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+
+Funcionalitats principals
+
+Registre i inici de sessió d’usuaris.
+
+Protecció de rutes mitjançant autenticació.
+
+Creació, visualització i eliminació de projectes.
+
+Gestió de participants dins dels projectes.
+
+Afegir i eliminar despeses associades a un projecte.
+
+Panell de resum amb càlcul automàtic de saldos.
+
+Regles de seguretat a Firestore per evitar accessos no autoritzats.
+
+
+
+
+Seguretat
+
+S’han definit regles de seguretat a Firebase Firestore que garanteixen que:
+
+Només els usuaris autenticats poden accedir a les dades.
+
+Només el propietari o els participants poden veure els projectes.
+
+Les despeses estan protegides i vinculades al projecte corresponent.
+
+
+Autor
+
+Pràctica realitzada per a l’assignatura DA02 – Desenvolupament al núvol.

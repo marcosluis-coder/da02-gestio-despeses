@@ -15,8 +15,12 @@ export default function AddProject({ onCreated }) {
       title,
       ownerUid: user.uid,
       participants: [
-        { id: crypto.randomUUID(), name: user.email }
+        {
+          id: user.uid,
+          name: user.email
+        }
       ],
+      participantIds: [user.uid],
       createdAt: serverTimestamp()
     })
 
