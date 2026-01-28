@@ -88,7 +88,6 @@ Només el propietari o els participants poden veure els projectes.
 
 Les despeses estan protegides i vinculades al projecte corresponent.
 
-
 Autor: Marcos Luis Valdes
 
 Pràctica realitzada per a l’assignatura DA02 – Desenvolupament al núvol.
