@@ -1,26 +1,14 @@
 import { useEffect, useState } from "react"
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  onSnapshot,
-  deleteDoc,
-  doc
-} from "firebase/firestore"
+import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore"
 import { db } from "../firebase"
 
 export default function ExpenseList({ projectId }) {
   const [expenses, setExpenses] = useState([])
 
   useEffect(() => {
-    const q = query(
-      collection(db, "expenses"),
-      where("projectId", "==", projectId),
-      orderBy("createdAt", "desc")
-    )
+    const ref = collection(db, "projects", projectId, "expenses")
 
-    const unsub = onSnapshot(q, (snapshot) => {
+    const unsub = onSnapshot(ref, (snapshot) => {
       setExpenses(
         snapshot.docs.map(doc => ({
           id: doc.id,
@@ -33,9 +21,16 @@ export default function ExpenseList({ projectId }) {
   }, [projectId])
 
   const deleteExpense = async (id) => {
-    if (!confirm("Eliminar aquesta despesa?")) return
-    await deleteDoc(doc(db, "expenses", id))
-  }
+  console.log("Intentant eliminar:", id)
+
+  if (!confirm("Eliminar aquesta despesa?")) return
+
+  await deleteDoc(
+    doc(db, "projects", projectId, "expenses", id)
+  )
+
+  console.log("Eliminat OK")
+}
 
   return (
     <div className="space-y-2">

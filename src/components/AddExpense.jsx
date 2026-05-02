@@ -20,7 +20,8 @@ export default function AddExpense({ project }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!concept || !amount || splitBetween.length === 0) return
+    
+  if (!concept.trim() || amount <= 0 || splitBetween.length === 0) return
 
     await addDoc(
       collection(db, "projects", project.id, "expenses"),

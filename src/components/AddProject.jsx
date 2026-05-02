@@ -28,6 +28,8 @@ export default function AddProject({ onCreated }) {
     onCreated && onCreated()
   }
 
+  
+
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
       <input

@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react"
-import {
-  collection,
-  onSnapshot
-} from "firebase/firestore"
+import { collection, onSnapshot } from "firebase/firestore"
 import { db } from "../firebase"
 
 export default function ExpenseSummary({ project }) {
@@ -10,13 +7,15 @@ export default function ExpenseSummary({ project }) {
   const [total, setTotal] = useState(0)
 
   useEffect(() => {
+    if (!project?.id) return
+
     const ref = collection(db, "projects", project.id, "expenses")
 
     const unsub = onSnapshot(ref, (snapshot) => {
       const balances = {}
       let totalAmount = 0
 
-      // Inicialitzam participants
+      // Inicialitzar participants
       project.participants.forEach(p => {
         balances[p.name] = 0
       })
@@ -41,7 +40,7 @@ export default function ExpenseSummary({ project }) {
     })
 
     return () => unsub()
-  }, [project])
+  }, [project.id]) // 🔥 IMPORTANTÍSSIM
 
   return (
     <div className="border p-4 rounded space-y-3">
@@ -52,22 +51,22 @@ export default function ExpenseSummary({ project }) {
       </p>
 
       <ul className="space-y-1">
-        {Object.entries(summary).map(([name, value]) => (
-          <li key={name} className="flex justify-between">
-            <span>{name}</span>
-            <span
-              className={
-                value > 0
-                  ? "text-green-600 font-semibold"
-                  : value < 0
-                  ? "text-red-600 font-semibold"
-                  : ""
-              }
-            >
-              {value.toFixed(2)} €
-            </span>
-          </li>
-        ))}
+        {Object.entries(summary)
+          .filter(([, value]) => value !== 0)
+          .map(([name, value]) => (
+            <li key={name} className="flex justify-between">
+              <span>{name}</span>
+              <span
+                className={
+                  value > 0
+                    ? "text-green-600 font-semibold"
+                    : "text-red-600 font-semibold"
+                }
+              >
+                {value.toFixed(2)} €
+              </span>
+            </li>
+          ))}
       </ul>
     </div>
   )

@@ -1,10 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { doc, getDoc } from "firebase/firestore"
+import { doc, onSnapshot } from "firebase/firestore"
 import { db } from "../firebase"
 import AddExpense from "../components/AddExpense"
 import ExpenseList from "../components/ExpenseList"
 import ExpenseSummary from "../components/ExpenseSummary"
+import Participants from "../components/Participants"
+
 
 
 export default function ProjectDetail() {
@@ -14,21 +16,21 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchProject = async () => {
-      const ref = doc(db, "projects", id)
-      const snap = await getDoc(ref)
+  const ref = doc(db, "projects", id)
 
-      if (!snap.exists()) {
-        navigate("/")
-        return
-      }
-
-      setProject({ id: snap.id, ...snap.data() })
-      setLoading(false)
+  const unsub = onSnapshot(ref, (snap) => {
+    if (!snap.exists()) {
+      navigate("/")
+      return
     }
 
-    fetchProject()
-  }, [id, navigate])
+    setProject({ id: snap.id, ...snap.data() })
+    setLoading(false)
+  })
+
+  return () => unsub()
+}, [id, navigate])
+
 
   if (loading) return <p className="p-4">Carregant projecte...</p>
 
@@ -40,19 +42,13 @@ export default function ProjectDetail() {
 
       <h1 className="text-2xl font-bold">{project.title}</h1>
 
-      <p className="text-sm font-semibold">Participants:</p>
+      <Participants project={project} />
+
       <AddExpense project={project} />
       <ExpenseList projectId={project.id} />
       <ExpenseSummary project={project} />
-      <ul className="list-disc ml-5">
-        {project.participants.map(p => (
-          <li key={p.id}>{p.name}</li>
-        ))}
-      </ul>
 
-      <p className="italic text-gray-500">
-        Encara no hi ha despeses en aquest projecte
-      </p>
+
     </div>
   )
 }
