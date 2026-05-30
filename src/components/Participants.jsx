@@ -4,6 +4,8 @@ import { db } from "../firebase"
 
 export default function Participants({ project }) {
   const [name, setName] = useState("")
+  const [editingId, setEditingId] = useState(null)
+  const [editingName, setEditingName] = useState("")
 
   const addParticipant = async () => {
     if (!name.trim()) return
@@ -28,7 +30,9 @@ export default function Participants({ project }) {
   const removeParticipant = async (id) => {
     if (project.participants.length === 1) return
 
-    const newParticipants = project.participants.filter(p => p.id !== id)
+    const newParticipants = project.participants.filter(
+      p => p.id !== id
+    )
 
     const ref = doc(db, "projects", project.id)
 
@@ -38,23 +42,85 @@ export default function Participants({ project }) {
     })
   }
 
+  const startEdit = (participant) => {
+    setEditingId(participant.id)
+    setEditingName(participant.name)
+  }
+
+  const saveEdit = async (id) => {
+    if (!editingName.trim()) return
+
+    const newParticipants = project.participants.map(p =>
+      p.id === id
+        ? { ...p, name: editingName.trim() }
+        : p
+    )
+
+    const ref = doc(db, "projects", project.id)
+
+    await updateDoc(ref, {
+      participants: newParticipants,
+    })
+
+    setEditingId(null)
+    setEditingName("")
+  }
+
   return (
     <div className="border p-3 rounded space-y-2">
       <h3 className="font-bold">Participants</h3>
 
-      <ul className="space-y-1">
+      <ul className="space-y-2">
         {project.participants.map(p => (
           <li
             key={p.id}
-            className="flex justify-between items-center"
+            className="flex justify-between items-center gap-2"
           >
-            <span>{p.name}</span>
-            <button
-              className="btn btn-xs btn-error"
-              onClick={() => removeParticipant(p.id)}
-            >
-              ❌
-            </button>
+            {editingId === p.id ? (
+              <>
+                <input
+                  className="input input-bordered input-sm w-full"
+                  value={editingName}
+                  onChange={(e) =>
+                    setEditingName(e.target.value)
+                  }
+                />
+
+                <button
+                  className="btn btn-xs btn-success"
+                  onClick={() => saveEdit(p.id)}
+                >
+                  Guardar
+                </button>
+
+                <button
+                  className="btn btn-xs"
+                  onClick={() => setEditingId(null)}
+                >
+                  Cancel·lar
+                </button>
+              </>
+            ) : (
+              <>
+                <span>{p.name}</span>
+
+                <div className="flex gap-1">
+                  <button
+                    className="btn btn-xs btn-warning"
+                    onClick={() => startEdit(p)}
+                  >
+                    ✏️
+                  </button>
+
+                  <button
+                    className="btn btn-xs btn-error"
+                    onClick={() => removeParticipant(p.id)}
+                  >
+                    ❌
+                  </button>
+                </div>
+              </>
+            )}
           </li>
         ))}
       </ul>
@@ -66,6 +132,7 @@ export default function Participants({ project }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+
         <button
           className="btn btn-primary"
           onClick={addParticipant}

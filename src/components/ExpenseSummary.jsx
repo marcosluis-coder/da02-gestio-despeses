@@ -27,11 +27,19 @@ export default function ExpenseSummary({ project }) {
         totalAmount += expense.amount
 
         // Qui paga suma tot
-        balances[expense.paidBy] += expense.amount
+        if (balances[expense.paidBy] === undefined) {
+  balances[expense.paidBy] = 0
+}
+
+balances[expense.paidBy] += expense.amount
 
         // Qui participa resta la seva part
         expense.splitBetween.forEach(name => {
-          balances[name] -= part
+         if (balances[name] === undefined) {
+  balances[name] = 0
+}
+
+balances[name] -= part
         })
       })
 
